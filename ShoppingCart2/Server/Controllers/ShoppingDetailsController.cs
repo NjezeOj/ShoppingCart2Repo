@@ -22,9 +22,26 @@ namespace ShoppingCart2.Server.Controllers
 
         // GET: api/ShoppingDetails
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShoppingDetails>>> GetShoppingDetails()
+        public IEnumerable<myShopping> GetShoppingDetails()
         {
-            return await _context.ShoppingDetails.ToListAsync();
+            var results = (from items in _context.ItemDetails
+                           join shop in _context.ShoppingDetails
+                                on items.ItemId equals shop.ItemId
+                           select new myShopping
+                           {
+
+                               ShopId = shop.ShopId,
+                               ItemName = items.ItemName,
+                               ImageName = items.ImageName,
+                               UserName = shop.UserName,
+                               Qty = shop.Qty,
+                               TotalAmount = shop.TotalAmount,
+                               Description = shop.Description,
+                               ShoppingDate = shop.ShoppingDate
+                           }).ToList();
+
+
+            return results;
         }
 
         // GET: api/ShoppingDetails/5
